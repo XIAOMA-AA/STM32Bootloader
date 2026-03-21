@@ -24,6 +24,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "Int_bootloader.h"
+#include "app_bootloader.h"
 extern uint8_t is_bootloader;
 extern uint32_t uart_rec_full_len;
 /* USER CODE END Includes */
@@ -90,7 +91,9 @@ int main(void)
   MX_GPIO_Init();
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
-  Int_Bootloader();
+  // Int_Bootloader();
+
+  App_bootloader_init();
   /* USER CODE END 2 */
 
   /* Infinite loop */
