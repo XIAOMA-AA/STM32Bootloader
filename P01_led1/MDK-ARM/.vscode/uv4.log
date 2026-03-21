@@ -1,0 +1,9 @@
+*** Using Compiler 'V5.06 update 7 (build 960)', folder: 'D:\Keil_v5\ARM\ARMCC\Bin'
+Build target 'P01_led1'
+compiling main.c...
+linking...
+Program Size: Code=3564 RO-data=380 RW-data=16 ZI-data=1024  
+FromELF: creating hex file...
+After Build - User command #1: D:\Keil_v5\ARM\ARMCLANG\bin\fromelf --bin -o "P01_led1\P01_led1.bin" "P01_led1\P01_led1.axf"
+"P01_led1\P01_led1.axf" - 0 Error(s), 0 Warning(s).
+Build Time Elapsed:  00:00:02
