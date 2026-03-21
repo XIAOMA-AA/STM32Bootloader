@@ -16,6 +16,9 @@ uint8_t is_bootloader = 0;
 // 写入位置的偏移量
 uint16_t bootloarder_offset = 0;
 
+// 记录当前一次接收记录的时间
+uint32_t last_rec_time = 0;
+
 // 末尾可能出现的单独字节
 uint8_t last_byte_flag = 0;
 uint8_t last_byte = 0;
@@ -187,6 +190,8 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t size)
 {
     if (huart->Instance == USART1)
     {
+        // 记录当前时间
+        last_rec_time = HAL_GetTick();
         // 每次接收的字节数
         uart_rec_len = size;
         // 累计接收字节数
@@ -214,7 +219,7 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t size)
  * @brief 初始化串口接收
  *
  */
-void Int_Bootloader(void)
+void Int_Bootloader_receive_app(void)
 {
     // 清空掉初始化串口使用的缓存
     __HAL_UART_CLEAR_OREFLAG(&huart1);
@@ -278,4 +283,28 @@ void Int_Bootloader_jump_app(void)
     // 2.7 跳转a程序复位中断。把复位中断地址转换为函数指针，调用函数
     pFunc jum_to_app = (pFunc)app_reset_handle;
     jum_to_app();
+}
+
+/**
+ * @brief 擦除flash页,外部可调用提前擦除flash
+ *
+ * @param page_addr 页地址
+ * @param pages 页数量
+ */
+void Int_Bootloader_erase_flash(uint32_t page_addr, uint16_t pages)
+{
+    // 解锁flash
+    HAL_FLASH_Unlock();
+    // 擦除flash页
+    // 需要先擦除，后写入flash
+    FLASH_EraseInitTypeDef flash_erase_init_struct = {0};
+    flash_erase_init_struct.TypeErase = FLASH_TYPEERASE_PAGES; // 页擦除
+    flash_erase_init_struct.Banks = FLASH_BANK_1;              // 选择BANK1
+    flash_erase_init_struct.PageAddress = page_addr;           // 页地址
+    flash_erase_init_struct.NbPages = pages;                   // 擦除pages页数
+    uint32_t page_error = 0;
+    // 擦除flash页
+    HAL_FLASHEx_Erase(&flash_erase_init_struct, &page_error);
+    // 加锁
+    HAL_FLASH_Lock();
 }
