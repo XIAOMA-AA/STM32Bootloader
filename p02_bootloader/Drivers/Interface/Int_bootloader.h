@@ -20,7 +20,7 @@ void Int_Bootloader_receive_app(void);
  * @brief 跳转应用程序
  *
  */
-void Int_Bootloader_jump_app(void);
+uint8_t Int_Bootloader_jump_app(void);
 
 /**
  * @brief 擦除flash页,外部可调用提前擦除flash

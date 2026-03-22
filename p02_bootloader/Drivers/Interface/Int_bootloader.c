@@ -231,9 +231,9 @@ void Int_Bootloader_receive_app(void)
 
 /**
  * @brief 跳转应用程序
- *
+ *  0:成功 1:失败
  */
-void Int_Bootloader_jump_app(void)
+uint8_t Int_Bootloader_jump_app(void)
 {
     typedef void (*pFunc)(void);
 
@@ -247,14 +247,14 @@ void Int_Bootloader_jump_app(void)
     if (app_stack_ptr & 0xffff0000 != (STACK_ADDR))
     {
         printf("stack ptr error\n");
-        return;
+        return 1;
     }
 
     // 1.2 校验复位中断地址 0x0800 4xxx
     if (app_reset_handle < App_Address || app_reset_handle > STACK_END)
     {
         printf("reset handle error\n");
-        return;
+        return 1;
     }
 
     // 2 注销bootloader程序
@@ -283,6 +283,10 @@ void Int_Bootloader_jump_app(void)
     // 2.7 跳转a程序复位中断。把复位中断地址转换为函数指针，调用函数
     pFunc jum_to_app = (pFunc)app_reset_handle;
     jum_to_app();
+    
+    // 执行不到
+    printf("jump app sucess\n");
+    return 0;
 }
 
 /**
