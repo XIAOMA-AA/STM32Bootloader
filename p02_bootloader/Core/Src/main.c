@@ -18,6 +18,8 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "i2c.h"
+#include "spi.h"
 #include "usart.h"
 #include "gpio.h"
 
@@ -25,6 +27,7 @@
 /* USER CODE BEGIN Includes */
 #include "Int_bootloader.h"
 #include "app_bootloader.h"
+#include "Int_w24c02.h"
 extern uint8_t is_bootloader;
 extern uint32_t uart_rec_full_len;
 /* USER CODE END Includes */
@@ -90,10 +93,35 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_USART1_UART_Init();
+  MX_I2C2_Init();
+  MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
   // Int_Bootloader();
 
-  App_bootloader_init();
+  // App_bootloader_init();
+
+  // 测试EEPROM
+  // 写入数据后，�?要等�?5ms以上才能读取，否则读不到
+  // Int_w24c02_write_byte(0x00, 'c');
+  // HAL_Delay(5);
+  // uint8_t data = Int_w24c02_read_byte(0x00);
+  // printf("read data: %c\n", data);
+
+  // 2 写入的数据超�?1页，会从头开始写
+  // Int_w24c02_write_bytes(0x01, (uint8_t *)"123456789012345678910", 21);
+  // HAL_Delay(5);
+  // // 读取写入的数�?
+  // uint8_t read_data[21];
+  // Int_w24c02_read_bytes(0x01, read_data, 21);
+  // printf("read data: %s\n", read_data);
+
+  // 1. �?查更新状�?
+  App_bootloader_check_update();
+  // 2. 执行更新操作
+  App_bootloader_update();
+  // 3. 跳转到应用程�?
+  App_bootloader_jump_app();
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -103,7 +131,7 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-    App_bootloader_work();
+    // App_bootloader_work();
   }
   /* USER CODE END 3 */
 }
