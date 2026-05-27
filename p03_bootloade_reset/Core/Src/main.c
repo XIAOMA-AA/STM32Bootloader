@@ -26,9 +26,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "Int_bootloader.h"
-#include "app_bootloader.h"
-#include "Int_w24c02.h"
-#include "Int_w25q32.h"
+
 extern uint8_t is_bootloader;
 extern uint32_t uart_rec_full_len;
 /* USER CODE END Includes */
