@@ -1,0 +1,3 @@
+Load "p02_bootloader\\p02_bootloader.axf" 
+Erase Done.Programming Done.Verify OK.Application running ...
+Flash Load finished at 21:07:02
