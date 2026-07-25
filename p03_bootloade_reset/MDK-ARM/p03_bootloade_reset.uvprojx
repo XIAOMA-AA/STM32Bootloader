@@ -747,6 +747,18 @@
         </Group>
         <Group>
           <GroupName>application</GroupName>
+          <Files>
+            <File>
+              <FileName>app_reset.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\application\app_reset.c</FilePath>
+            </File>
+            <File>
+              <FileName>app_reset.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\application\app_reset.h</FilePath>
+            </File>
+          </Files>
         </Group>
         <Group>
           <GroupName>::CMSIS</GroupName>
