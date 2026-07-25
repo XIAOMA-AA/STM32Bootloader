@@ -77,6 +77,27 @@ static void Int_w25q32_wait_busy(void)
     Int_w25q32_stop();
 }
 
+void Int_w25q32_read_data_with_32addr(uint32_t addr, uint8_t *data, uint16_t len)
+{
+     Int_w25q32_write_enable();
+
+    // 拉低片选
+    Int_w25q32_start();
+
+    // 发送读取指令
+    Int_w25q32_write_byte(W25Q32_READ_DATA);
+    Int_w25q32_write_byte((addr >> 16) & 0xFF); // 发送高8位地址
+    Int_w25q32_write_byte((addr >> 8) & 0xFF);  // 发送中8位地址
+    Int_w25q32_write_byte(addr & 0xFF);         // 发送低8位地址
+    // 读取数据
+    for (uint16_t i = 0; i < len; i++)
+    {
+        data[i] = Int_w25q32_read_byte();
+    }
+    // 拉高片选
+    Int_w25q32_stop();
+}
+
 /**
  * @brief 读取多个字节
  *

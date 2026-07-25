@@ -59,6 +59,14 @@ void Int_w25q32_read_id(uint8_t *mf_id, uint16_t *dev_id);
 void Int_w25q32_read_data(uint8_t block_addr, uint8_t sector_addr, uint8_t page_addr, uint8_t addr, uint8_t *data, uint16_t len);
 
 /**
+ * @brief 读取数据使用32位地址
+ * 
+ * @param addr 
+ * @param data 
+ * @param len 
+ */
+void Int_w25q32_read_data_with_32addr(uint32_t addr, uint8_t *data, uint16_t len);
+/**
  * @brief  写入多个字节
  *
  * @param block_addr 块地址
