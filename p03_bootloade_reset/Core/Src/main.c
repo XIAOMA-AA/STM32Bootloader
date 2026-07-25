@@ -60,16 +60,22 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+#define RESET_ADDR 0x4000
 /* USER CODE END 0 */
 
 /**
- * @brief  The application entry point.
- * @retval int
- */
+  * @brief  The application entry point.
+  * @retval int
+  */
 int main(void)
 {
   /* USER CODE BEGIN 1 */
+
+  /* 重定向中断向量表 */
+  SCB->VTOR = FLASH_BASE | RESET_ADDR;
+  /* 打开中断 */
+  __enable_irq();
+
 
   /* USER CODE END 1 */
 
@@ -96,44 +102,17 @@ int main(void)
   MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
   // Int_Bootloader();
-
+  printf("Bootloader start!\n");
+  HAL_GPIO_WritePin(LED2_GPIO_Port, LED2_Pin, GPIO_PIN_RESET);
+  App_bootloader_init();
   // App_bootloader_init();
-  // 1. 检查更新状态
-  App_bootloader_check_update();
-  // 2. 是否进入默认程序
-  App_bootloader_check_default();
-  // 3. 执行更新操作
-  App_bootloader_update();
-  // 4. 跳转到应用程序
-  // App_bootloader_jump_app();
-
-  // 测试EEPROM
-  // 写入数据后，等5ms以上才能读取，否则读不到
-  // Int_w24c02_write_byte(0x00, 'c');
-  // HAL_Delay(5);
-  // uint8_t data = Int_w24c02_read_byte(0x00);
-  // printf("read data: %c\n", data);
-
-  // 2 写入的数据超过1页，会从头开始写
-  // Int_w24c02_write_bytes(0x01, (uint8_t *)"123456789012345678910", 21);
-  // HAL_Delay(5);
-  // // 读取写入的数据
-  // uint8_t read_data[21];
-  // Int_w24c02_read_bytes(0x01, read_data, 21);
-  // printf("read data: %s\n", read_data);
-
-  // uint8_t mf_id;
-  // uint16_t dev_id;
-  // Int_w25q32_read_id(&mf_id, &dev_id);
-  // printf("mf_id: %02x, dev_id: %04x\n", mf_id, dev_id);
   /* USER CODE END 2 */
-
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
     /* USER CODE END WHILE */
-
+    App_bootloader_work();
     /* USER CODE BEGIN 3 */
     // App_bootloader_work();
   }
@@ -141,17 +120,17 @@ int main(void)
 }
 
 /**
- * @brief System Clock Configuration
- * @retval None
- */
+  * @brief System Clock Configuration
+  * @retval None
+  */
 void SystemClock_Config(void)
 {
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
 
   /** Initializes the RCC Oscillators according to the specified parameters
-   * in the RCC_OscInitTypeDef structure.
-   */
+  * in the RCC_OscInitTypeDef structure.
+  */
   RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
   RCC_OscInitStruct.HSEState = RCC_HSE_ON;
   RCC_OscInitStruct.HSEPredivValue = RCC_HSE_PREDIV_DIV1;
@@ -165,8 +144,9 @@ void SystemClock_Config(void)
   }
 
   /** Initializes the CPU, AHB and APB buses clocks
-   */
-  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_SYSCLK | RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2;
+  */
+  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
+                              |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
@@ -183,9 +163,9 @@ void SystemClock_Config(void)
 /* USER CODE END 4 */
 
 /**
- * @brief  This function is executed in case of error occurrence.
- * @retval None
- */
+  * @brief  This function is executed in case of error occurrence.
+  * @retval None
+  */
 void Error_Handler(void)
 {
   /* USER CODE BEGIN Error_Handler_Debug */
@@ -197,14 +177,14 @@ void Error_Handler(void)
   /* USER CODE END Error_Handler_Debug */
 }
 
-#ifdef USE_FULL_ASSERT
+#ifdef  USE_FULL_ASSERT
 /**
- * @brief  Reports the name of the source file and the source line number
- *         where the assert_param error has occurred.
- * @param  file: pointer to the source file name
- * @param  line: assert_param error line source number
- * @retval None
- */
+  * @brief  Reports the name of the source file and the source line number
+  *         where the assert_param error has occurred.
+  * @param  file: pointer to the source file name
+  * @param  line: assert_param error line source number
+  * @retval None
+  */
 void assert_failed(uint8_t *file, uint32_t line)
 {
   /* USER CODE BEGIN 6 */

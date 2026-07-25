@@ -9,6 +9,8 @@ uint8_t app_boot_update_status = BOOT_NO_UPDATE;
 void App_bootloader_check_update(void)
 {
     // 读取3个字节的数据
+    printf("Check update status...\n");
+    printf("check update\n");
     uint8_t data[3];
     Int_w24c02_read_bytes(CHECK_UPDATE_ADDR, data, 3);
     // 判断校验密钥是否正确,默认高八位在前

@@ -107,7 +107,7 @@ int main(void)
   // 3. 执行更新操作
   App_bootloader_update();
   // 4. 跳转到应用程序
-  // App_bootloader_jump_app();
+  App_bootloader_jump_app();
 
   // 测试EEPROM
   // 写入数据后，等5ms以上才能读取，否则读不到

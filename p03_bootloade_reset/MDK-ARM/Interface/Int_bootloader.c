@@ -103,12 +103,13 @@ static void Int_flash_write_halfword(void)
     // 判断当前写入的是否为偶数字节
     /*
         rec_len 有两种情况 119 120如果是119 + 标志位1 那就是120，如果是120 + 标志位0 那就是121
+        标志位是last_byte_flag，如果是1，说明上次有遗留字节，如果是0，说明上次没有遗留字节
         主要考虑最后一次写入问题。。。。
     */
     // 其实就是rec len是奇数还是偶数字节的问题
     if ((uart_rec_len + last_byte_flag) % 2 == 0)
     {
-        // 如果rec是奇数字节，就拼接上次的
+        // 如果rec_len + last_flag进入此判断，说明rec_len是奇数字节，就拼接上次的
         if (last_byte_flag)
         {
             Int_flash_write_with_last();
@@ -238,12 +239,12 @@ uint8_t Int_Bootloader_jump_app(void)
     typedef void (*pFunc)(void);
 
     // 1 校验
-    // 获取栈顶指针的值
+    // 获取栈顶指针的值,APP程序地址
     uint32_t app_stack_ptr = *(volatile uint32_t *)(App_Address);
     // 复位中断地址 = 应用程序地址 + 4
     uint32_t app_reset_handle = *(volatile uint32_t *)(App_Address + 4);
 
-    // 1.1 校验栈顶地址
+    // 1.1 校验栈顶地址是否在栈地址范围内
     if (app_stack_ptr & 0xffff0000 != (STACK_ADDR))
     {
         printf("stack ptr error\n");

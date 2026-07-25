@@ -1,45 +1,52 @@
-#ifndef __APP_BOOTLOADER_H__
-#define __APP_BOOTLOADER_H__
+#ifndef __APP_RESET_H
+#define __APP_RESET_H
 
-#include "Int_w24c02.h"
 #include "Int_bootloader.h"
 
-// 添加校验密钥
-#define CHECK_KEY_ADDR 0x11 // 存储校验密钥的地址
-#define CHECK_KEY 0x5A6B    // 校验密钥
 
-// 存储更新状态的位置
-#define CHECK_UPDATE_ADDR 0x10 // 存储是否需要更新的标志位地址
+typedef enum
+{
+    BOOTLOADER_STATUS_INIT,
+    BOOTLOADER_STATUS_RUN,
+    BOOTLOADER_STATUS_REC_DATA,
+    BOOTLOADER_STATUS_CHECK_DATA,
+    BOOTLOADER_STATUS_JUMP_APP
+}Bootloader_status;
 
-#define BOOT_UPDATE 0X01       // 需要更新标志位
-#define BOOT_NO_UPDATE 0X00    // 不需要更新标志位
-
-// 恢复出厂设置
-#define BOOT_RESET 0x03
-
-// 判断当前是否需要更新
 /**
- * @brief
+ * @brief 初始化bootloader => 打印日志启动
  *
  */
-void App_bootloader_check_update(void);
+void App_bootloader_init(void);
 
 /**
- * @brief 检查是否默认程序
- * 
+ * @brief 等待用户传输确认
+ *
  */
-void App_bootloader_check_default(void);
+void App_bootloader_run(void);
 
 /**
- * @brief 执行更新操作
- * 
+ * @brief 接收数据
+ *
  */
-void App_bootloader_update(void);
+void App_bootloader_rec_data(void);
 
 /**
- * @brief 跳转到应用程序
+ * @brief 已经传输完成 校验数据
+ *  uint8_t: 0 校验通过 1 校验失败
+ */
+uint8_t App_bootloader_check_data(void);
+
+/**
+ * @brief 跳转程序
+ *  uint8_t: 0 校验通过 1 校验失败
+ */
+uint8_t App_bootloader_jump_app(void);
+
+/**
+ * @brief 在main方法的while循环中调用
  * 
  */
-void App_bootloader_jump_app(void);
+void App_bootloader_work(void);
 
-#endif // __APP_BOOTLOADER_H__
+#endif // !__APP_BOOTLOADER_H
