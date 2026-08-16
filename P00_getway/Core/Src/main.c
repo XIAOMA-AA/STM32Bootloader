@@ -18,13 +18,15 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "crc.h"
 #include "fdcan.h"
 #include "usart.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "Int_can.h"
+#include "app_update.h"
+#include "app_bootloader.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -90,27 +92,26 @@ int main(void)
   MX_GPIO_Init();
   MX_USART2_UART_Init();
   MX_FDCAN1_Init();
+  MX_CRC_Init();
   /* USER CODE BEGIN 2 */
-  Int_fdcan_init();
-  Int_fdcan_send(0x1, (uint8_t *)"Hello", 5);
-  // can_recv_msg_t msg[3];
-  // uint32_t count = 0;
-  // HAL_Delay(1000);
-  // Int_fdcan_recv(msg, &count);
-  // for(uint32_t i=0;i<count;i++)
-  // {
-  //   printf("ID: 0x%03X,len: %d Data: %s\n", msg[i].rx_header.Identifier,msg[i].rx_header.DataLength, msg[i].data);
-  // }
+  App_bootloader_init();
+  extern Bootloader_status boot_status;
+  while (1)
+  {
+    App_bootloader_work();
+    if (boot_status == BOOTLOADER_STATUS_REC_DONE)
+    {
+      break;
+    }
+  }
+  App_Update_Init();
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    // printf("Hello World!\n");
-    Int_fdcan_send(0x1, (uint8_t *)"Hello", 5);
-    printf("semd ok \r\n");
-    HAL_Delay(1000);
+    App_Update_work();
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

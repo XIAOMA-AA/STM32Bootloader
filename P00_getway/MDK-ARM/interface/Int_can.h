@@ -3,7 +3,7 @@
 
 #include "fdcan.h"
 #include "stdio.h"
-
+#include <string.h>
 typedef struct
 {
     FDCAN_RxHeaderTypeDef rx_header;
