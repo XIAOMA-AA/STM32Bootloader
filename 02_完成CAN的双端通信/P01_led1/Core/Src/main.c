@@ -101,14 +101,14 @@ int main(void)
   // Int_CAN_send(0x1, "hi", 2);
 
   // 接收CAN消息
-  HAL_Delay(1000);
+  // HAL_Delay(1000);
   CAN_Rec_MSG_t can_msg[3] = {0};
   uint8_t msg_count = 0;
-  Int_CAN_receive_msg(can_msg, &msg_count);
-  for (uint8_t i = 0; i < msg_count; i++)
-  {
-    printf("id: %d, len: %d data: %s\n", can_msg[i].header.StdId, can_msg[i].header.DLC, can_msg[i].data);
-  }
+  // Int_CAN_receive_msg(can_msg, &msg_count);
+  // for (uint8_t i = 0; i < msg_count; i++)
+  // {
+  //   printf("id: %d, len: %d data: %s\n", can_msg[i].header.StdId, can_msg[i].header.DLC, can_msg[i].data);
+  // }
   /* USER CODE END 2 */
 
   /* Infinite loop */
